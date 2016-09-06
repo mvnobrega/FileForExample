@@ -1,0 +1,20 @@
+# Firewall - versao 1.1
+# Marcio Nobrega 
+# 1.1 - Inclusao do limitador de conexoes e liberacao da porta 80 e 443 e 2297 para ssh.
+
+# Variaveis
+Interface_Externa="eth0"
+IPT=/sbin/iptables
+
+# Parte 1 - Limpa as regras
+$IPT -F
+
+# Parte 2 - Bloqueia tudo na interface externa
+$IPT -A INPUT -i $Interface_Externa -m state ! --state ESTABLISHED,RELATED -j DROP
+
+# Parte 3 - Libera as portas
+# Libera acesso a porta 2297, 80, 443 e 3306
+$IPT -I INPUT -i $Interface_Externa -p tcp -s 0/0 --dport 80 -j ACCEPT
+$IPT -I INPUT -i $Interface_Externa -p tcp -s 0/0 --dport 443 -j ACCEPT
+$IPT -I INPUT -i $Interface_Externa -p tcp -s 0/0 --dport 2297 -j ACCEPT
+$IPT -I INPUT -i $Interface_Externa -p tcp -s 0/0 --dport 3306 -j ACCEPT
